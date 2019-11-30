@@ -4,11 +4,12 @@ module Json
   module Schema
     module Subset
       class DSL
-        def initialize(type: "object", schema: {}, params: {}, ref: nil, &block)
+        def initialize(type: "object", schema: {}, params: {}, ref: nil, options: nil, &block)
           @type = type
           @schema = schema
           @params = params
           @ref = ref
+          @options = options || {}
           @optionals = []
           set!(&block) if block_given?
         end
@@ -58,16 +59,16 @@ module Json
         end
 
         def components!(name)
-          "#/components/#{name}"
+          "#/components/#{canon_name!(name)}"
         end
 
         def definitions!(name)
-          "#/definitions/#{name}"
+          "#/definitions/#{canon_name!(name)}"
         end
 
         def array!(&block)
           change_type!("array")
-          @schema["items"] = DSL.new(&block)
+          @schema["items"] = DSL.new(options: @options, &block)
         end
 
         def respond_to_missing?(name, include_private)
@@ -88,17 +89,20 @@ module Json
           type = type.is_a?(Array) ? type.map(&:to_s) : type.to_s
           case
           when type == "ref"
-            @schema[name.to_s] = DSL.new(ref: args[1], &block)
+            @schema[name.to_s] = DSL.new(ref: args[1], options: @options, &block)
           when type == "cref"
-            @schema[name.to_s] = DSL.new(ref: components!(args[1]), &block)
+            @schema[name.to_s] = DSL.new(ref: components!(args[1]), options: @options, &block)
           when type == "dref"
-            @schema[name.to_s] = DSL.new(ref: definitions!(args[1]), &block)
+            @schema[name.to_s] = DSL.new(ref: definitions!(args[1]), options: @options, &block)
           when Array(type).include?("array")
-            @schema[name.to_s] = DSL.new(type: type, params: opts, schema: { "items" => DSL.new(&block) })
+            @schema[name.to_s] =
+              DSL.new(
+                type: type, params: opts, schema: { "items" => DSL.new(options: @options, &block) }, options: @options,
+              )
           when Array(type).include?("object")
-            @schema[name.to_s] = DSL.new(type: type, params: opts, &block)
+            @schema[name.to_s] = DSL.new(type: type, params: opts, options: @options, &block)
           else
-            @schema[name.to_s] = DSL.new(type: type, schema: opts, &block)
+            @schema[name.to_s] = DSL.new(type: type, schema: opts, options: @options, &block)
           end
         end
 
@@ -113,6 +117,10 @@ module Json
           else
             @type = Array(@type) + [type]
           end
+        end
+
+        def canon_name!(name)
+          @options[:reference_name] ? @options[:reference_name].call(name.to_s) : name.to_s
         end
       end
     end

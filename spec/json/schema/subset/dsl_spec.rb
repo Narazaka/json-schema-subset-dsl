@@ -1,7 +1,8 @@
 RSpec.describe Json::Schema::Subset::DSL do
-  subject { described_class.new(&block).compile! }
+  subject { described_class.new(options: options, &block).compile! }
 
   context "full" do
+    let(:options) { nil }
     let(:block) do
       lambda do |domain|
         title! "Foo"
@@ -72,6 +73,8 @@ RSpec.describe Json::Schema::Subset::DSL do
   end
 
   context "simple" do
+    let(:options) { { reference_name: ->(name) { name.sub(/Serializer$/, "") } } }
+
     let(:block) do
       lambda do |domain|
         title! "Example"
@@ -89,7 +92,7 @@ RSpec.describe Json::Schema::Subset::DSL do
             ref! "#/components/Param"
           end
           opt_params :array do
-            cref! "OptParam"
+            cref! "OptParamSerializer"
           end
           uuid :ref, "#/UUID", optional: true
         end

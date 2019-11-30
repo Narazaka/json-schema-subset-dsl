@@ -26,7 +26,11 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-dsl = Json::Schema::Subset::DSL.new do
+options = {
+  reference_name: ->(name) { name.sub(/Serializer$/, ""),
+}
+
+dsl = Json::Schema::Subset::DSL.new(options) do
   title! "Example"
   id :integer
   name :string, minLength: 1, optional: true
@@ -42,7 +46,7 @@ dsl = Json::Schema::Subset::DSL.new do
       ref! "#/components/Param"
     end
     opt_params :array do
-      cref! "OptParam"
+      cref! "OptParamSerializer"
     end
     uuid :ref, "#/UUID", optional: true
   end
