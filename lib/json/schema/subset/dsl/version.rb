@@ -1,8 +1,8 @@
 module Json
   module Schema
     module Subset
-      module Dsl
-        VERSION = "0.1.0"
+      class DSL
+        VERSION = "0.1.0".freeze
       end
     end
   end
