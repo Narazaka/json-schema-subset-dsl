@@ -50,7 +50,19 @@ module Json
         end
 
         def cref!(name)
-          ref! "#/components/#{name}"
+          ref! components!(name)
+        end
+
+        def dref!(name)
+          ref! definitions!(name)
+        end
+
+        def components!(name)
+          "#/components/#{name}"
+        end
+
+        def definitions!(name)
+          "#/definitions/#{name}"
         end
 
         def array!(&block)
@@ -78,7 +90,9 @@ module Json
           when type == "ref"
             @schema[name.to_s] = DSL.new(ref: args[1])
           when type == "cref"
-            @schema[name.to_s] = DSL.new(ref: "#/components/#{args[1]}")
+            @schema[name.to_s] = DSL.new(ref: components!(args[1]))
+          when type == "dref"
+            @schema[name.to_s] = DSL.new(ref: definitions!(args[1]))
           when Array(type).include?("array")
             @schema[name.to_s] = DSL.new(type: type, params: opts, schema: { "items" => DSL.new(&block) })
           when Array(type).include?("object")
