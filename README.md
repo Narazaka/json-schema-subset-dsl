@@ -1,5 +1,8 @@
 # Json::Schema::Subset::DSL
 
+[![Actions Status](https://github.com/Narazaka/json-schema-subset-dsl/workflows/Ruby/badge.svg)](https://github.com/Narazaka/json-schema-subset-dsl/actions)
+[![Gem Version](https://badge.fury.io/rb/json-schema-subset-dsl.svg)](https://badge.fury.io/rb/json-schema-subset-dsl)
+
 Yet another JSON Schema subset DSL.
 
 Useful when writing a simple JSON schema.
