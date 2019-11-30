@@ -8,7 +8,7 @@ RSpec.describe Json::Schema::Subset::DSL do
         id :integer, minimum: 1
         name :string, minLength: 1
         flag :boolean, optional: true
-        obj :object do
+        obj :object, title: "OBJ" do
           id :integer
           foos :array, optional: true do
             string! title: "Str1"
@@ -19,7 +19,9 @@ RSpec.describe Json::Schema::Subset::DSL do
             null!
           end
           bazs :array do
-            id :integer
+            id :integer do
+              maximum! 10
+            end
           end
           hoge :object do
             cref! :aa
@@ -48,7 +50,9 @@ RSpec.describe Json::Schema::Subset::DSL do
               },
               "bazs" => {
                 "items" => {
-                  "type" => "object", "properties" => { "id" => { "type" => "integer" } }, "required" => %w[id]
+                  "type" => "object",
+                  "properties" => { "id" => { "type" => "integer", "maximum" => 10 } },
+                  "required" => %w[id],
                 },
                 "type" => "array",
               },
@@ -56,6 +60,7 @@ RSpec.describe Json::Schema::Subset::DSL do
               "fuga" => { "$ref" => "aa" },
             },
             "required" => %w[id bars bazs hoge fuga],
+            "title" => "OBJ",
           },
         },
         "required" => %w[id name obj],

@@ -25,14 +25,14 @@ module Json
             ret = @schema.dup
             ret["type"] = @type
             ret["items"] = ret["items"].compile!
-            ret.merge(@params)
+            ret.merge(@params.map { |k, v| [k.to_s, v] }.to_h)
           when Array(@type).include?("object")
             required = @schema.keys - @optionals
             ret = { "type" => @type, "properties" => @schema.map { |k, v| [k, v.compile!] }.to_h }
             ret["required"] = required unless required.empty?
-            ret.merge(@params)
+            ret.merge(@params.map { |k, v| [k.to_s, v] }.to_h)
           else
-            @schema.merge("type" => @type).map { |k, v| [k.to_s, v] }.to_h.merge(@params)
+            @schema.merge("type" => @type).merge(@params).map { |k, v| [k.to_s, v] }.to_h
           end
         end
 
@@ -88,17 +88,17 @@ module Json
           type = type.is_a?(Array) ? type.map(&:to_s) : type.to_s
           case
           when type == "ref"
-            @schema[name.to_s] = DSL.new(ref: args[1])
+            @schema[name.to_s] = DSL.new(ref: args[1], &block)
           when type == "cref"
-            @schema[name.to_s] = DSL.new(ref: components!(args[1]))
+            @schema[name.to_s] = DSL.new(ref: components!(args[1]), &block)
           when type == "dref"
-            @schema[name.to_s] = DSL.new(ref: definitions!(args[1]))
+            @schema[name.to_s] = DSL.new(ref: definitions!(args[1]), &block)
           when Array(type).include?("array")
             @schema[name.to_s] = DSL.new(type: type, params: opts, schema: { "items" => DSL.new(&block) })
           when Array(type).include?("object")
             @schema[name.to_s] = DSL.new(type: type, params: opts, &block)
           else
-            @schema[name.to_s] = DSL.new(type: type, schema: opts)
+            @schema[name.to_s] = DSL.new(type: type, schema: opts, &block)
           end
         end
 
