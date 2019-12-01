@@ -77,7 +77,11 @@ module Json
 
         def method_missing(name, *args, &block)
           if name.to_s.end_with?("!")
-            @params[name[0...-1]] = args[0]
+            if block_given?
+              @params[name[0...-1]] = DSL.new(options: @options, &block).compile!
+            else
+              @params[name[0...-1]] = args[0]
+            end
             return
           end
 

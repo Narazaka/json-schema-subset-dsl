@@ -125,4 +125,21 @@ RSpec.describe Json::Schema::Subset::DSL do
 
     it_is_asserted_by { subject == schema }
   end
+
+  context "additional" do
+    let(:options) { nil }
+
+    let(:block) do
+      lambda do |domain|
+        title! "Example"
+        additionalPropeties! { string! }
+      end
+    end
+
+    let(:schema) do
+      { "type" => "object", "properties" => {}, "additionalPropeties" => { "type" => "string" }, "title" => "Example" }
+    end
+
+    it_is_asserted_by { subject == schema }
+  end
 end
