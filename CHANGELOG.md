@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.3.0
+
+- add: additionalPropeties support
+
 ## 1.2.0
 
 - add: reference_name option
