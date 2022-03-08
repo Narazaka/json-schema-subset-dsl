@@ -59,7 +59,7 @@ module Json
         end
 
         def components!(name)
-          "#/components/#{canon_name!(name)}"
+          "#/components/schemas/#{canon_name!(name)}"
         end
 
         def definitions!(name)

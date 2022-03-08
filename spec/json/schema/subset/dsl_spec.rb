@@ -57,7 +57,7 @@ RSpec.describe Json::Schema::Subset::DSL do
                 },
                 "type" => "array",
               },
-              "hoge" => { "$ref" => "#/components/aa" },
+              "hoge" => { "$ref" => "#/components/schemas/aa" },
               "fuga" => { "$ref" => "aa" },
             },
             "required" => %w[id bars bazs hoge fuga],
@@ -89,7 +89,7 @@ RSpec.describe Json::Schema::Subset::DSL do
         meta :object do
           description :string
           params :array do
-            ref! "#/components/Param"
+            ref! "#/components/schemas/Param"
           end
           opt_params :array do
             cref! "OptParamSerializer"
@@ -111,8 +111,8 @@ RSpec.describe Json::Schema::Subset::DSL do
             "type" => "object",
             "properties" => {
               "description" => { "type" => "string" },
-              "params" => { "items" => { "$ref" => "#/components/Param" }, "type" => "array" },
-              "opt_params" => { "items" => { "$ref" => "#/components/OptParam" }, "type" => "array" },
+              "params" => { "items" => { "$ref" => "#/components/schemas/Param" }, "type" => "array" },
+              "opt_params" => { "items" => { "$ref" => "#/components/schemas/OptParam" }, "type" => "array" },
               "uuid" => { "$ref" => "#/UUID" },
             },
             "required" => %w[description params opt_params],

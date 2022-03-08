@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.0
+
+- fix: cref!(id) == "#/components/schemas/#{id}"
+
 ## 1.3.0
 
 - add: additionalPropeties support
